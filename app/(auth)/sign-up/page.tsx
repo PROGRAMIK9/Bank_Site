@@ -8,5 +8,4 @@ const signup= () => {
     </section>
   )
 }
-
 export default signup
