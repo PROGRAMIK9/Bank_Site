@@ -2,8 +2,9 @@ import React from 'react'
 import HeaderArea from '@/components/HeaderArea'
 import TotalBalanceBox from '@/components/BalanceBox';
 import RightSidebar from '@/components/RightSidebar';
-const page = () => {
-  const loggedUser = {firstName: 'John', lastName: 'Doe', email:'abg@gmail.com'}; // Example user data
+import { getLoggedInUser } from '@/lib/actions/user.action';
+const page = async() => {
+  const loggedUser = await getLoggedInUser();
   return (
     <section className="home">
       <div className="home-content">
@@ -11,7 +12,7 @@ const page = () => {
           <HeaderArea 
             type="greeting"
             title = "Welcome"
-            user ={loggedUser?.firstName || 'Guest'}
+            user ={loggedUser?.name || 'Guest'}
             subtext = "Access and manage your bank account with ease."
           />
           <TotalBalanceBox

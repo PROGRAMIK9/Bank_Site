@@ -1,9 +1,22 @@
 import MobileNav from "@/components/MobileNav";
 import Sidebar from "@/components/Sidebar";
+import { getLoggedInUser } from "@/lib/actions/user.action";
 import Image from "next/image";
+import {redirect, useRouter}  from "next/navigation";
+import * as Sentry from '@sentry/nextjs';
+import type { Metadata } from 'next';
 // app/{root}/layout.tsx
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const loggedUser = { firstName: 'John', lastName: 'Doe' }; // Example user data
+export function generateMetadata(): Metadata {
+return {
+  // ... your existing metadata
+  other: {
+    ...Sentry.getTraceData()
+  }
+};
+}
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const loggedUser = await getLoggedInUser();
+  if(!loggedUser) redirect('sign-in');
   return (
     <main className="flex h-screen w-full font-inter">
       <Sidebar user={loggedUser} />

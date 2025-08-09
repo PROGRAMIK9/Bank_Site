@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -17,6 +17,7 @@ const AuthForm = ({ type }: { type: string }) => {
     const [user, setuser] = useState(null)
     const [isloading, setIsLoading] = useState(false)
     const formSchema = AuthformSchema(type);
+  
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -36,15 +37,15 @@ const AuthForm = ({ type }: { type: string }) => {
         try{
             //Appwrite
             if(type === "sign-up"){
-                // const newUser = await signUp(data);
-                // setuser(newUser);
+                const newUser = await signUp(data);
+                setuser(newUser);
             }
             if(type === "sign-in"){
-                // const response = await signIn({
-                //     email: data.email,
-                //     password: data.password
-                // });
-                // if(response) router.push('/');
+                const response = await signIn({
+                    email: data.email,
+                    password: data.password
+                });
+                if(response) router.push('/');
             }
         }catch(err){
             console.log(err)

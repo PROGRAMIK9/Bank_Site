@@ -4,19 +4,21 @@ import {createAdminClient} from "../appwrite";
 import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 import { parseStringify } from "../utils";
-export const signIn = async () =>{
+import { create } from "domain";
+export const signIn = async ({email, password}: signInProps) =>{
     try{
-
+        const { account } = await createAdminClient();
+        const response = await account.createEmailPasswordSession(email,password);
+        return parseStringify(response);
     }catch(err){
         console.error("Error signing in:", err);
     }
 }
 
 export const signUp = async (formData : SignUpParams) =>{
-    try{
+   const {email, password, firstName, lastName} = formData;  
+  try{
         const { account } = await createAdminClient();
-        const {email, password, firstName, lastName} = formData;
-        
         const newUserAccount = await account.create(ID.unique(),
         email,
         password,
@@ -39,8 +41,19 @@ export const signUp = async (formData : SignUpParams) =>{
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
-    return await account.get();
+    const user = await account.get();
+    return parseStringify(user);
   } catch (error) {
     return null;
+  }
+}
+
+export const logOut = async ()=>{
+  try{
+    const {account} = await createSessionClient();
+    cookies().delete("appwrite-session");
+    await account.deleteSession("current");
+  }catch(err){
+    return null
   }
 }
